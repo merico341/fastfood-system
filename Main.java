@@ -7,54 +7,60 @@ public class Main {
         
         client user = new client();
         lista carrinho = new lista();
-        int nota;
 
+        System.out.println("Bem vindo a Hamburgueria do seu zé!");
         System.out.println("Qual o seu nome?");
         user.setName(sc.nextLine());
 
+        try {
+            System.out.println("Deseja por cpf?");
+            if(sc.nextLine().equals("sim")) {
+                System.out.println("Digite seu cpf:");
+                user.setCpf(sc.nextLine());
+            } else {
+                System.err.println("Operação cancelada");
+            }
+        } catch (Exception e) {
+            System.err.println("Erro, falha ao por cpf, por favor continue sem");
+        }
+
         do {
-            System.out.println(user.getName() + " escolha o seu pedido:");
-            System.out.println("1. Hamburgue  2. Fritas  3. Refrigerante 4. Combo 5. Sair 6. Remover item do carrinho");
+            System.out.println("\n" + user.getName() + " adicione o seu pedido no carrinho");
+            System.out.println("1. Hamburguer - 2. Batata-Frita - 3. Coca-cola - 4. Combo - 5. Remover item do carrinho - 6. ir para o check out - 0. ver itens no carrinho");
             
             try {
                 carrinho.setEscolha(sc.nextInt());
             } catch ( Exception e) {
-                carrinho.setEscolha(10000);
+                carrinho.setEscolha(100);
             }
 
             switch (carrinho.getEscolha()) {
                 case 1:
-                    System.out.println();
                     carrinho.addItem("Hamburguer");
-                    System.out.println("o seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
+                    System.out.println("\no seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
                     break;
                 case 2:
-                    System.out.println();
                     carrinho.addItem("Fritas");
-                    System.out.println("o seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
+                    System.out.println("\no seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
                     break;
                 case 3:
-                    System.out.println();
                     carrinho.addItem("Refrigerante");
-                    System.out.println("o seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
+                    System.out.println("\no seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
                     break;
                 case 4:
-                    System.out.println();
                     carrinho.addItem("combo");
-                    System.out.println("o seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
+                    System.out.println("\no seu pedido " + carrinho.getLastItem() + " foi adicionado no carrinho");
                     break;
                 case 5:
-                    System.out.println();
-                    System.out.println("Obrigado por comprar");
-                    System.out.println(carrinho.getList());
-                    break;
-                case 6:
-                    System.out.println();
                     carrinho.removeLastItem();
                     for (int i = 0; i < carrinho.getListSize(); i++) {
                         System.out.println(i+1 + " " + carrinho.getListItem(i));
                     }
                     break;
+                case 6:
+                    System.out.println("\nObrigado por comprar " + carrinho.getList());
+                    break;
+                    
                 case 0:
                     System.out.println();
                     for (int i = 0; i < carrinho.getListSize(); i++) {
@@ -63,43 +69,56 @@ public class Main {
                     break;
                 default:
                     System.out.println();
-                    System.out.println("algo deu errado");
+                    System.out.println("\nalgo deu errado");
                     break;
             }
-        } while (carrinho.getEscolha() != 5);
+        } while (carrinho.getEscolha() != 6);
         
         System.out.println("qual nota vc dá ao atendimento de 1 a 5?");
-        nota = sc.nextInt();
+        user.setNota(sc.nextInt());;
 
-        System.out.println(user.getName() + " obrigado por comprar, vc comprou " + carrinho.getList());
-        System.out.println("o usuario deu " + nota + " de nota do atendimento");
+        System.out.println(user.getName() + ", do cpf: " + user.getCpf() +", obrigado por comprar, vc comprou " + carrinho.getList());
+        System.out.println("o usuario deu " + user.getNota() + " de nota do atendimento");
         sc.close();
     }
 
     public static class client {
         private String name;
         private String cpf;
+        private int nota;
 
         public void setName(String name) {
             this.name = name;
         }
 
         public void setCpf(String cpf) {
-            this.cpf = cpf;
+            this.cpf = cpf.replaceAll("[^0-9]", cpf);
+        }
+
+        public void setNota(int nota) {
+            this.nota = nota;
         }
 
         public String getCpf() {
-            return this.cpf;
+            if (this.cpf.equals("0")) {
+                return "sem cpf";
+            } else {
+                return this.cpf.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
+            }
         }
+
         public String getName() {
             return this.name;
         } 
+
+        public int getNota() {
+            return this.nota;
+        }
     }
 
     public static class lista {
         private ArrayList<String> list = new ArrayList<String>();
         private String lastItemName;
-        private int listSize;
         private int escolha;
 
         public void addItem(String item) {
@@ -133,9 +152,7 @@ public class Main {
         }
 
         public int getListSize() {
-            listSize = list.size();
-            return this.listSize;
+            return list.size();
         }
-        
     }
 }
